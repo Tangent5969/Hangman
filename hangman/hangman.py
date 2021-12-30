@@ -3,6 +3,7 @@ import words
 import os
 import platform
 from man import man
+
 win = False
 lost = False
 difficulty_chosen = False
@@ -12,6 +13,7 @@ secret_list = []
 point = 0
 accepted_characters = "abcdefghijklmnopqrstuvwxyz"
 
+
 def clear_console():
     system = platform.system()
     if system == "Linux" or system == "Darwin":
@@ -19,13 +21,18 @@ def clear_console():
     else:
         os.system('cls')
 
-def pick_word(difficulty):
 
-    if difficulty == '1': secret = random.choice(words.easy)
-    elif difficulty == '2': secret = random.choice(words.medium)
-    elif difficulty == '3': secret = random.choice(words.hard)
+def pick_word(difficulty):
+    if difficulty == '1':
+        secret = random.choice(words.easy)
+    elif difficulty == '2':
+        secret = random.choice(words.medium)
+    elif difficulty == '3':
+        secret = random.choice(words.hard)
     return secret
 
+
+# asks the user to select the difficulty of the randomly chosen word
 clear_console()
 while not difficulty_chosen:
     difficulty = input("Press 1 for easy\nPress 2 for medium\nPress 3 for hard\n")
@@ -36,6 +43,7 @@ while not difficulty_chosen:
         clear_console()
         print("Enter a valid option\n")
 
+# hides the randomly chosen word
 for i in range(len(secret)):
     secret_list.append(secret[i])
 hidden_word = "_ " * len(secret_list)
@@ -51,16 +59,21 @@ while not win and not lost:
         print(f"you have {wrong} guesses remaining!")
         print(hidden_word)
         guess = input("Enter a letter: ")
+
+        # checks for a valid input
         if len(guess) != 1 or accepted_characters.count(guess.lower()) != 1:
             clear_console()
             print("Enter a valid guess\n")
         elif guessed_list.count(guess) >= 1:
             clear_console()
             print(f"You have already guessed '{guess}'\n")
+
         else:
             guessed = True
             guessed_list.append(guess)
             guessed_list.sort()
+
+    # checks if the guessed letter appears in the secret word
     for i in range(len(secret_list)):
         if guess == secret_list[i]:
             temp_list = list(hidden_word)
@@ -68,17 +81,20 @@ while not win and not lost:
             hidden_word = "".join(temp_list)
             point += 1
             found = True
-    if found == False:
-        wrong -=1
+    if not found:
+        wrong -= 1
         clear_console()
         print("You guessed an incorrect letter, try again\n")
-    else: clear_console()
+    else:
+        clear_console()
+
+    # checks for win/loss conditions
     if wrong == 0:
         lost = True
     elif point == len(secret):
         win = True
 
-if lost == True:
+if lost:
     clear_console()
     print(man[wrong])
     print(f"You lost!\nThe word was {secret}")
